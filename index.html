@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Next-generation Online Job Portal connecting top talent with industry leaders. Featuring dedicated dashboards for Job Seekers, Employers, and Administrators.">
+  <title>CareerPulse — Next-Gen Online Job Portal</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js for interactive analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ================= TOP GLOBAL NAVIGATION ================= -->
+  <header class="app-header" id="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper" onclick="App.navigate('home')">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Career<span>Pulse</span></span>
+        <span class="brand-badge">PRO</span>
+      </div>
+
+      <!-- Navigation Links based on View -->
+      <nav class="main-nav" id="main-nav">
+        <a href="#home" class="nav-link active" data-nav="home" onclick="App.navigate('home')">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </a>
+        <a href="#explore-jobs" class="nav-link" data-nav="explore-jobs" onclick="App.navigate('explore-jobs')">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Explore Jobs
+        </a>
+        <a href="#dashboard" class="nav-link" data-nav="dashboard" onclick="App.navigate('dashboard')">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span id="nav-dashboard-title">Dashboard</span>
+        </a>
+      </nav>
+
+      <!-- Header Right Controls -->
+      <div class="header-actions">
+        <!-- Notification Center -->
+        <div class="dropdown-wrapper">
+          <button class="icon-btn" id="notif-btn" title="Notifications" onclick="App.toggleNotifDropdown(event)">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="badge-dot" id="notif-badge-count">3</span>
+          </button>
+          <div class="dropdown-menu notif-menu" id="notif-menu">
+            <div class="notif-header">
+              <h4>System Notifications</h4>
+              <button class="text-btn" onclick="App.markAllNotificationsRead()">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="icon-btn theme-toggle" id="theme-btn" title="Toggle Theme" onclick="App.toggleTheme()">
+          <svg class="sun-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+
+        <!-- Current User Profile / Role Trigger -->
+        <div class="current-user-pill" onclick="App.openRoleSwitchModal()">
+          <div class="user-avatar" id="header-avatar">AR</div>
+          <div class="user-info-text">
+            <span class="user-name" id="header-user-name">Alex Rivera</span>
+            <span class="user-role-tag" id="header-user-role">Job Seeker</span>
+          </div>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ROLE DEMO SWITCHER BAR ================= -->
+  <div class="role-quick-bar" id="role-quick-bar">
+    <div class="role-bar-content">
+      <span class="role-bar-label"><span class="pulse-indicator"></span> Active Role Demo:</span>
+      <div class="role-pills">
+        <button class="role-pill-btn active" data-role="seeker" onclick="App.switchUser('usr-seeker-1')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Job Seeker (Alex Rivera)
+        </button>
+        <button class="role-pill-btn" data-role="employer" onclick="App.switchUser('usr-emp-1')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Employer (Sarah Chen • Stripe)
+        </button>
+        <button class="role-pill-btn" data-role="admin" onclick="App.switchUser('usr-admin-1')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin (Marcus Vance)
+        </button>
+      </div>
+      <button class="btn btn-sm btn-outline-danger" onclick="App.resetToDemoData()" title="Reset all test modifications">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        Reset State
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="main-content" id="main-content">
+
+    <!-- =============================================================== -->
+    <!-- VIEW 1: LANDING / HOME PAGE                                     -->
+    <!-- =============================================================== -->
+    <section class="view-section active" id="view-home">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="sparkle">✨</span> Guvi Certified • Enterprise Ready Job Platform
+          </div>
+          <h1 class="hero-title">
+            Unlock High-Impact Careers & <br><span class="gradient-text">Hire World-Class Talent</span>
+          </h1>
+          <p class="hero-subtitle">
+            An intelligent ecosystem uniting ambitious Job Seekers, forward-thinking Employers, and System Administrators with automated workflows, real-time analytics, and matched recommendations.
+          </p>
+
+          <!-- Search Hero Bar -->
+          <div class="hero-search-box">
+            <div class="search-input-group">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="hero-search-query" placeholder="Job title, keywords, or company...">
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-input-group">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <input type="text" id="hero-search-location" placeholder="City, State, or 'Remote'">
+            </div>
+            <button class="btn btn-primary btn-search" onclick="App.handleHeroSearch()">
+              <span>Search Jobs</span>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Hero Metrics -->
+          <div class="hero-metrics">
+            <div class="metric-item">
+              <span class="metric-num" id="hero-stat-jobs">2,450+</span>
+              <span class="metric-label">Active Openings</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <span class="metric-num" id="hero-stat-companies">850+</span>
+              <span class="metric-label">Verified Employers</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <span class="metric-num" id="hero-stat-seekers">45,000+</span>
+              <span class="metric-label">Job Applications</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <span class="metric-num">98.4%</span>
+              <span class="metric-label">Satisfaction Rate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Roles / Quick Switch Showcase -->
+      <div class="portal-role-cards-section">
+        <div class="section-header text-center">
+          <span class="section-tag">Role-Based Architecture</span>
+          <h2 class="section-title">Designed for All Three Stakeholders</h2>
+          <p class="section-desc">Experience the unified power tailored specifically for your operational role</p>
+        </div>
+
+        <div class="role-showcase-grid">
+          <!-- Card 1: Job Seeker -->
+          <div class="role-showcase-card seeker-card">
+            <div class="role-card-icon">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>Job Seeker Portal</h3>
+            <p>Smart job search, AI skill matching, one-click applications, real-time application pipeline tracking, and resume builder.</p>
+            <ul class="role-features-list">
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Live application status tracker</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> AI Personalized Job Recommendations</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Profile & Resume Builder</li>
+            </ul>
+            <button class="btn btn-outline-primary w-100" onclick="App.switchUser('usr-seeker-1'); App.navigate('dashboard');">Enter as Seeker &rarr;</button>
+          </div>
+
+          <!-- Card 2: Employer -->
+          <div class="role-showcase-card employer-card">
+            <div class="role-card-icon">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <h3>Employer Portal</h3>
+            <p>Publish job vacancies, review applicants, advance candidate stages, message prospects directly, and analyze hiring funnels.</p>
+            <ul class="role-features-list">
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Job Listing Management & History</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Interactive Applicant Review & Stage Kanban</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Built-in Direct Candidate Chat</li>
+            </ul>
+            <button class="btn btn-outline-primary w-100" onclick="App.switchUser('usr-emp-1'); App.navigate('dashboard');">Enter as Employer &rarr;</button>
+          </div>
+
+          <!-- Card 3: Admin -->
+          <div class="role-showcase-card admin-card">
+            <div class="role-card-icon">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Administrator Portal</h3>
+            <p>System-wide governance, user account management, job approval & moderation queue, analytics telemetry, and configuration.</p>
+            <ul class="role-features-list">
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> User CRUD & Role Enforcement</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Job Listing Moderation & Approval Engine</li>
+              <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Real-time Audit & Activity Telemetry</li>
+            </ul>
+            <button class="btn btn-outline-primary w-100" onclick="App.switchUser('usr-admin-1'); App.navigate('dashboard');">Enter as Admin &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Jobs Preview on Home -->
+      <div class="featured-jobs-section">
+        <div class="section-header-flex">
+          <div>
+            <span class="section-tag">Hot Openings</span>
+            <h2 class="section-title">Explore Trending Opportunities</h2>
+          </div>
+          <button class="btn btn-secondary" onclick="App.navigate('explore-jobs')">View All Jobs &rarr;</button>
+        </div>
+        <div class="job-cards-grid" id="home-featured-jobs-grid">
+          <!-- Injected via App.renderHomeFeaturedJobs() -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- VIEW 2: EXPLORE JOBS PAGE (PUBLIC & SEEKER SEARCH)              -->
+    <!-- =============================================================== -->
+    <section class="view-section" id="view-explore-jobs">
+      <div class="jobs-browser-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filters-sidebar">
+          <div class="filters-header">
+            <h3><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filters</h3>
+            <button class="text-btn" onclick="JobSeeker.resetFilters()">Reset</button>
+          </div>
+
+          <!-- Search Keyword -->
+          <div class="filter-group">
+            <label class="filter-label">Keyword / Skill</label>
+            <div class="input-with-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="filter-keyword" placeholder="e.g. React, Java, Lead" oninput="JobSeeker.applyFilters()">
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="filter-group">
+            <label class="filter-label">Location</label>
+            <div class="input-with-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <input type="text" id="filter-location" placeholder="City or Remote" oninput="JobSeeker.applyFilters()">
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="filter-group">
+            <label class="filter-label">Department / Category</label>
+            <select id="filter-category" class="select-input" onchange="JobSeeker.applyFilters()">
+              <option value="all">All Departments</option>
+              <option value="Engineering">Engineering & Software</option>
+              <option value="Product">Product Management</option>
+              <option value="Design">UI/UX & Product Design</option>
+              <option value="Data & AI">Data & Artificial Intelligence</option>
+              <option value="Marketing">Marketing & Growth</option>
+              <option value="Security">Cybersecurity</option>
+            </select>
+          </div>
+
+          <!-- Job Type -->
+          <div class="filter-group">
+            <label class="filter-label">Employment Type</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="job-type" value="Full-time" checked onchange="JobSeeker.applyFilters()"> Full-time
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="job-type" value="Contract" checked onchange="JobSeeker.applyFilters()"> Contract
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="job-type" value="Remote" checked onchange="JobSeeker.applyFilters()"> Remote
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="job-type" value="Part-time" checked onchange="JobSeeker.applyFilters()"> Part-time
+              </label>
+            </div>
+          </div>
+
+          <!-- Experience Level -->
+          <div class="filter-group">
+            <label class="filter-label">Experience Level</label>
+            <select id="filter-experience" class="select-input" onchange="JobSeeker.applyFilters()">
+              <option value="all">All Levels</option>
+              <option value="Entry-Level">Entry-Level (0-2 yrs)</option>
+              <option value="Mid-Level">Mid-Level (2-5 yrs)</option>
+              <option value="Senior">Senior (5-8 yrs)</option>
+              <option value="Lead / Staff">Lead / Staff (8+ yrs)</option>
+            </select>
+          </div>
+
+          <!-- Salary Range Slider -->
+          <div class="filter-group">
+            <div class="range-header">
+              <label class="filter-label">Min Salary (Annual)</label>
+              <span class="range-val" id="salary-val-display">$60,000</span>
+            </div>
+            <input type="range" id="filter-min-salary" min="40000" max="250000" step="10000" value="60000" class="range-slider" oninput="JobSeeker.onSalaryRangeChange(this.value)">
+          </div>
+        </aside>
+
+        <!-- Main Job Listing Stream -->
+        <div class="jobs-main-content">
+          <div class="results-header">
+            <div>
+              <h2 class="results-title">Available Positions</h2>
+              <p class="results-count" id="jobs-count-text">Showing 8 approved opportunities</p>
+            </div>
+            <div class="sort-controls">
+              <label>Sort by:</label>
+              <select id="sort-jobs-select" class="select-input select-sm" onchange="JobSeeker.applyFilters()">
+                <option value="newest">Newest First</option>
+                <option value="salary-high">Salary: High to Low</option>
+                <option value="match-score">Skills Match %</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Job Cards List -->
+          <div class="jobs-stream-list" id="jobs-stream-list">
+            <!-- Dynamic jobs list injected here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- VIEW 3: UNIFIED DASHBOARDS (ROLE-SWITCHED INTERFACE)             -->
+    <!-- =============================================================== -->
+    <section class="view-section" id="view-dashboard">
+      
+      <!-- ================= 3A: JOB SEEKER DASHBOARD ================= -->
+      <div class="dashboard-panel seeker-dashboard" id="panel-seeker">
+        <!-- Seeker Top Profile Hero Banner -->
+        <div class="dashboard-banner seeker-banner">
+          <div class="banner-avatar" id="seeker-banner-avatar">AR</div>
+          <div class="banner-info">
+            <div class="banner-badge">Job Seeker</div>
+            <h2 id="seeker-banner-name">Alex Rivera</h2>
+            <p id="seeker-banner-title">Senior Full-Stack Engineer • San Francisco, CA (Open to Remote)</p>
+          </div>
+          <div class="banner-actions">
+            <button class="btn btn-primary" onclick="JobSeeker.openProfileModal()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              Edit Profile & Resume
+            </button>
+            <button class="btn btn-secondary" onclick="App.navigate('explore-jobs')">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              Search Openings
+            </button>
+          </div>
+        </div>
+
+        <!-- Seeker Nav Tabs -->
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" data-tab="seeker-applications" onclick="JobSeeker.switchTab('seeker-applications')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            My Applications (<span id="seeker-app-count">3</span>)
+          </button>
+          <button class="tab-btn" data-tab="seeker-recommendations" onclick="JobSeeker.switchTab('seeker-recommendations')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>
+            AI Recommendations <span class="badge-pill pulse">Matched</span>
+          </button>
+          <button class="tab-btn" data-tab="seeker-profile" onclick="JobSeeker.switchTab('seeker-profile')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile & Resume
+          </button>
+          <button class="tab-btn" data-tab="seeker-history" onclick="JobSeeker.switchTab('seeker-history')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Application History & Logs
+          </button>
+        </div>
+
+        <!-- Seeker Tab Content 1: Applications Tracker -->
+        <div class="tab-pane active" id="pane-seeker-applications">
+          <div class="stats-overview-grid">
+            <div class="stat-card">
+              <div class="stat-icon icon-blue">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Submitted</span>
+                <span class="stat-val" id="seeker-stat-total">3</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-yellow">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">In Review / Shortlist</span>
+                <span class="stat-val" id="seeker-stat-review">2</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-purple">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Interview Stages</span>
+                <span class="stat-val" id="seeker-stat-interview">1</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-green">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Offers Received</span>
+                <span class="stat-val" id="seeker-stat-offers">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-table">
+            <div class="card-header-actions">
+              <div>
+                <h3>Active Applications & Pipeline Tracker</h3>
+                <p class="text-muted">Track your submission progress across review stages in real time</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary" onclick="JobSeeker.renderApplications()">Refresh Tracker</button>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="seeker-applications-table">
+                <thead>
+                  <tr>
+                    <th>Job Title & Company</th>
+                    <th>Date Applied</th>
+                    <th>Current Status</th>
+                    <th>Pipeline Progress</th>
+                    <th>Messages</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="seeker-applications-tbody">
+                  <!-- Injected via JobSeeker.renderApplications() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seeker Tab Content 2: AI Job Recommendations -->
+        <div class="tab-pane" id="pane-seeker-recommendations">
+          <div class="card mb-4">
+            <div class="ai-header-banner">
+              <div class="ai-sparkle-badge">AI Skill-Match Engine</div>
+              <h3>Curated Recommendations for Alex</h3>
+              <p class="text-muted">Jobs scored based on matching your profile skills: <span class="skills-highlight" id="seeker-current-skills-display">React, Node.js, TypeScript, Java, AWS, GraphQL</span></p>
+            </div>
+          </div>
+          <div class="job-cards-grid" id="seeker-recommendations-grid">
+            <!-- Injected via JobSeeker.renderRecommendations() -->
+          </div>
+        </div>
+
+        <!-- Seeker Tab Content 3: Profile Management & Resume Builder -->
+        <div class="tab-pane" id="pane-seeker-profile">
+          <div class="profile-layout-grid">
+            <!-- Left Profile Form -->
+            <div class="card">
+              <div class="card-header">
+                <h3>Personal & Professional Profile</h3>
+                <p class="text-muted">Keep your credentials up to date for instant 1-click applications</p>
+              </div>
+              <form id="seeker-profile-form" onsubmit="JobSeeker.handleSaveProfile(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="prof-name" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="prof-email" class="form-control" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Professional Headline / Role *</label>
+                    <input type="text" id="prof-title" class="form-control" placeholder="e.g. Senior Frontend Engineer" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" id="prof-location" class="form-control" placeholder="e.g. San Francisco, CA" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="prof-phone" class="form-control" placeholder="+1 (555) 019-2834">
+                  </div>
+                  <div class="form-group">
+                    <label>Portfolio / GitHub URL</label>
+                    <input type="url" id="prof-portfolio" class="form-control" placeholder="https://alexrivera.dev">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Professional Bio / Summary</label>
+                  <textarea id="prof-bio" class="form-control" rows="3" placeholder="Briefly describe your passion, strengths, and career highlights..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>Key Skills (comma-separated)</label>
+                  <input type="text" id="prof-skills" class="form-control" placeholder="React, Node.js, TypeScript, Java, AWS, Docker">
+                  <small class="form-hint">Used for automatic job matching calculation.</small>
+                </div>
+
+                <div class="form-group">
+                  <label>Experience (Years & Highlights)</label>
+                  <textarea id="prof-experience" class="form-control" rows="3" placeholder="6+ years building scalable SaaS applications..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save Changes
+                  </button>
+                  <span id="profile-save-status" class="status-msg"></span>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right Resume Card -->
+            <div class="card resume-preview-card">
+              <div class="card-header">
+                <h3>Uploaded Resume File</h3>
+                <span class="badge badge-success">Active Document</span>
+              </div>
+              <div class="resume-file-box">
+                <div class="file-icon-wrap">
+                  <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="file-meta">
+                  <strong id="resume-filename">Alex_Rivera_Senior_Resume.pdf</strong>
+                  <span class="file-size" id="resume-filesize">Updated 2 days ago • PDF (240 KB)</span>
+                </div>
+              </div>
+
+              <div class="upload-zone" id="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
+                <input type="file" id="resume-file-input" style="display:none" accept=".pdf,.doc,.docx" onchange="JobSeeker.handleResumeFileUpload(event)">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                <p><strong>Click to replace resume</strong> or drag and drop</p>
+                <span class="file-types">Supports PDF, DOCX (Max 10MB)</span>
+              </div>
+
+              <div class="resume-quick-actions">
+                <button class="btn btn-sm btn-outline-secondary w-100" onclick="JobSeeker.viewActiveResumeModal()">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Preview Resume Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seeker Tab Content 4: Application History -->
+        <div class="tab-pane" id="pane-seeker-history">
+          <div class="card">
+            <div class="card-header">
+              <h3>Submission Audit & Historical Timeline</h3>
+              <p class="text-muted">Complete log of all jobs you have applied to, including closed or archived listings</p>
+            </div>
+            <div class="timeline-list" id="seeker-timeline-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 3B: EMPLOYER DASHBOARD ================= -->
+      <div class="dashboard-panel employer-dashboard" id="panel-employer" style="display:none;">
+        <!-- Employer Top Banner -->
+        <div class="dashboard-banner employer-banner">
+          <div class="banner-avatar emp-avatar" id="emp-banner-avatar">SC</div>
+          <div class="banner-info">
+            <div class="banner-badge badge-employer">Verified Enterprise Employer</div>
+            <h2 id="emp-banner-name">Sarah Chen • Stripe Technologies</h2>
+            <p id="emp-banner-subtitle">Talent Acquisition Lead • 6 Active Openings • 28 Total Applicants</p>
+          </div>
+          <div class="banner-actions">
+            <button class="btn btn-primary" onclick="Employer.openNewJobModal()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+              Post New Job Vacancy
+            </button>
+          </div>
+        </div>
+
+        <!-- Employer Tabs -->
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" data-tab="emp-jobs" onclick="Employer.switchTab('emp-jobs')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Job Management (<span id="emp-jobs-count">4</span>)
+          </button>
+          <button class="tab-btn" data-tab="emp-applications" onclick="Employer.switchTab('emp-applications')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Applicants Pipeline (<span id="emp-applicant-count">12</span>)
+          </button>
+          <button class="tab-btn" data-tab="emp-communication" onclick="Employer.switchTab('emp-communication')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Candidate Communication <span class="badge-pill" id="emp-unread-badge">1 New</span>
+          </button>
+          <button class="tab-btn" data-tab="emp-analytics" onclick="Employer.switchTab('emp-analytics')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+            Hiring Analytics & Trends
+          </button>
+        </div>
+
+        <!-- Tab 1: Job Management -->
+        <div class="tab-pane active" id="pane-emp-jobs">
+          <div class="card card-table">
+            <div class="card-header-actions">
+              <div>
+                <h3>Company Job Postings & Moderation Status</h3>
+                <p class="text-muted">Manage your job openings, track admin approvals, and view applicants per role</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="Employer.openNewJobModal()">+ Add New Vacancy</button>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="emp-jobs-table">
+                <thead>
+                  <tr>
+                    <th>Job Title & Details</th>
+                    <th>Type / Location</th>
+                    <th>Salary Range</th>
+                    <th>Admin Approval</th>
+                    <th>Applicants</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="emp-jobs-tbody">
+                  <!-- Dynamic jobs list -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Applicants Pipeline & Review -->
+        <div class="tab-pane" id="pane-emp-applications">
+          <div class="pipeline-filter-bar">
+            <div class="filter-group-inline">
+              <label>Filter by Job Posting:</label>
+              <select id="emp-filter-job-id" class="select-input select-sm" onchange="Employer.renderApplicants()">
+                <option value="all">All Postings</option>
+              </select>
+            </div>
+            <div class="filter-group-inline">
+              <label>Filter by Stage:</label>
+              <select id="emp-filter-stage" class="select-input select-sm" onchange="Employer.renderApplicants()">
+                <option value="all">All Stages</option>
+                <option value="Submitted">Submitted (New)</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Shortlisted">Shortlisted</option>
+                <option value="Interview Scheduled">Interview Scheduled</option>
+                <option value="Offered">Offered</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card card-table">
+            <div class="card-header">
+              <h3>Applicant Review Hub</h3>
+              <p class="text-muted">Inspect resumes, change application statuses, leave internal evaluations, and invite candidates</p>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Candidate</th>
+                    <th>Applied For</th>
+                    <th>Applied Date</th>
+                    <th>Resume / Profile</th>
+                    <th>Status / Stage</th>
+                    <th>Actions & Message</th>
+                  </tr>
+                </thead>
+                <tbody id="emp-applicants-tbody">
+                  <!-- Dynamic applicants -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Candidate Communication & Messaging -->
+        <div class="tab-pane" id="pane-emp-communication">
+          <div class="chat-portal-layout">
+            <!-- Chat Candidate Sidebar -->
+            <div class="chat-sidebar">
+              <div class="chat-sidebar-header">
+                <h4>Conversations</h4>
+                <span class="badge badge-primary" id="chat-count-badge">3 Candidates</span>
+              </div>
+              <div class="chat-threads-list" id="emp-chat-threads">
+                <!-- Injected via Employer.renderChatThreads() -->
+              </div>
+            </div>
+
+            <!-- Active Chat Window -->
+            <div class="chat-main-window">
+              <div class="chat-window-header" id="chat-window-header">
+                <div class="chat-active-user-info">
+                  <div class="user-avatar" id="chat-user-avatar">AR</div>
+                  <div>
+                    <h4 id="chat-user-name">Alex Rivera</h4>
+                    <span class="chat-user-sub" id="chat-user-sub">Applied for Senior Full-Stack Engineer</span>
+                  </div>
+                </div>
+                <div class="chat-quick-templates">
+                  <button class="btn btn-sm btn-outline-secondary" onclick="Employer.insertQuickTemplate('interview')">📅 Invite to Interview</button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="Employer.insertQuickTemplate('offer')">🎉 Send Offer Letter</button>
+                </div>
+              </div>
+
+              <!-- Message Stream -->
+              <div class="chat-messages-body" id="chat-messages-body">
+                <!-- Dynamic messages -->
+              </div>
+
+              <!-- Chat Input Box -->
+              <div class="chat-input-bar">
+                <input type="text" id="chat-input-text" class="chat-input" placeholder="Type a direct message to candidate..." onkeydown="if(event.key==='Enter') Employer.sendMessage()">
+                <button class="btn btn-primary" onclick="Employer.sendMessage()">
+                  <span>Send</span>
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Hiring Analytics -->
+        <div class="tab-pane" id="pane-emp-analytics">
+          <div class="analytics-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>Applications by Job Posting</h3>
+                <p class="text-muted">Applicant volume distribution across open roles</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-emp-jobs"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>Candidate Pipeline Conversion Funnel</h3>
+                <p class="text-muted">Progression from initial submission to job offers</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-emp-funnel"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 3C: ADMIN DASHBOARD ================= -->
+      <div class="dashboard-panel admin-dashboard" id="panel-admin" style="display:none;">
+        <!-- Admin Top Banner -->
+        <div class="dashboard-banner admin-banner">
+          <div class="banner-avatar admin-avatar" id="admin-banner-avatar">MV</div>
+          <div class="banner-info">
+            <div class="banner-badge badge-admin">Platform Super Admin</div>
+            <h2 id="admin-banner-name">Marcus Vance • System Governance</h2>
+            <p>Overall System Health: 99.98% • Total Registered Users: 32 • Active Jobs: 8</p>
+          </div>
+          <div class="banner-actions">
+            <button class="btn btn-primary" onclick="Admin.openCreateUserModal()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+              Create User Account
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" data-tab="admin-users" onclick="Admin.switchTab('admin-users')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            User Management (<span id="admin-users-count">8</span>)
+          </button>
+          <button class="tab-btn" data-tab="admin-moderation" onclick="Admin.switchTab('admin-moderation')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Job Listing Moderation <span class="badge-pill pulse" id="admin-pending-badge">2 Pending</span>
+          </button>
+          <button class="tab-btn" data-tab="admin-telemetry" onclick="Admin.switchTab('admin-telemetry')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+            Job Statistics & Analytics
+          </button>
+          <button class="tab-btn" data-tab="admin-activity" onclick="Admin.switchTab('admin-activity')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Real-time User Activity
+          </button>
+          <button class="tab-btn" data-tab="admin-settings" onclick="Admin.switchTab('admin-settings')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            System Settings
+          </button>
+        </div>
+
+        <!-- Tab 1: User Management -->
+        <div class="tab-pane active" id="pane-admin-users">
+          <div class="card card-table">
+            <div class="card-header-actions">
+              <div>
+                <h3>Platform User Accounts & Roles</h3>
+                <p class="text-muted">Direct control over Admin, Employer, and Job Seeker identities</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="Admin.openCreateUserModal()">+ Add New User</button>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="admin-users-table">
+                <thead>
+                  <tr>
+                    <th>User Details</th>
+                    <th>System Role</th>
+                    <th>Company / Title</th>
+                    <th>Account Status</th>
+                    <th>Joined Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <!-- Dynamic user list -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Job Listing Management / Moderation Queue -->
+        <div class="tab-pane" id="pane-admin-moderation">
+          <div class="card card-table">
+            <div class="card-header-actions">
+              <div>
+                <h3>Job Listing Moderation Queue</h3>
+                <p class="text-muted">Review, approve, or reject job postings submitted by employers</p>
+              </div>
+              <div class="status-legend">
+                <span class="legend-item"><span class="badge badge-warning">Pending</span> Needs Review</span>
+                <span class="legend-item"><span class="badge badge-success">Approved</span> Live on Site</span>
+                <span class="legend-item"><span class="badge badge-danger">Rejected</span> Needs Revisions</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="admin-moderation-table">
+                <thead>
+                  <tr>
+                    <th>Job Title & Company</th>
+                    <th>Category / Location</th>
+                    <th>Posted By</th>
+                    <th>Salary Range</th>
+                    <th>Current Status</th>
+                    <th>Moderation Decision</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-moderation-tbody">
+                  <!-- Dynamic moderation list -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: System Statistics & Telemetry -->
+        <div class="tab-pane" id="pane-admin-telemetry">
+          <div class="stats-overview-grid">
+            <div class="stat-card">
+              <div class="stat-icon icon-blue">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Total Users</span>
+                <span class="stat-val" id="admin-stat-total-users">18</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-purple">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Job Postings</span>
+                <span class="stat-val" id="admin-stat-total-jobs">10</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-yellow">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Applications</span>
+                <span class="stat-val" id="admin-stat-total-apps">34</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon icon-green">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="stat-meta">
+                <span class="stat-title">Approval Rate</span>
+                <span class="stat-val" id="admin-stat-approval-rate">88%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>Monthly Job Postings vs Applications</h3>
+                <p class="text-muted">Platform growth trends over the past 6 months</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-admin-growth"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>User Distribution by Role</h3>
+                <p class="text-muted">Proportion of Admins, Employers, and Job Seekers</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-admin-roles"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: User Activity Monitoring -->
+        <div class="tab-pane" id="pane-admin-activity">
+          <div class="card">
+            <div class="card-header-actions">
+              <div>
+                <h3>Real-time User Activity & Audit Stream</h3>
+                <p class="text-muted">Live logging of user logins, job applications, job approvals, and configuration updates</p>
+              </div>
+              <span class="live-pulse-badge"><span class="pulse-indicator"></span> Streaming Live</span>
+            </div>
+            <div class="activity-feed-list" id="admin-activity-feed">
+              <!-- Dynamic activity items -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: System Settings -->
+        <div class="tab-pane" id="pane-admin-settings">
+          <div class="card">
+            <div class="card-header">
+              <h3>System-Wide Configuration & Policies</h3>
+              <p class="text-muted">Configure portal behavior, moderation rules, and notification dispatch</p>
+            </div>
+            <form id="admin-settings-form" onsubmit="Admin.handleSaveSettings(event)">
+              <div class="settings-grid">
+                <div class="settings-section">
+                  <h4>General Portal Settings</h4>
+                  <div class="form-group">
+                    <label>Portal Platform Name</label>
+                    <input type="text" id="setting-site-name" class="form-control" value="CareerPulse Portal">
+                  </div>
+                  <div class="form-group">
+                    <label>Support Contact Email</label>
+                    <input type="email" id="setting-contact-email" class="form-control" value="admin@careerpulse.io">
+                  </div>
+                  <div class="form-group">
+                    <label>Default Currency</label>
+                    <select id="setting-currency" class="select-input">
+                      <option value="USD" selected>USD ($ - US Dollar)</option>
+                      <option value="EUR">EUR (€ - Euro)</option>
+                      <option value="GBP">GBP (£ - British Pound)</option>
+                      <option value="INR">INR (₹ - Indian Rupee)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="settings-section">
+                  <h4>Moderation & Workflow Policies</h4>
+                  <div class="switch-group">
+                    <div class="switch-info">
+                      <strong>Require Admin Approval for All Job Postings</strong>
+                      <p class="text-muted">When enabled, jobs are marked 'Pending' until approved by an administrator.</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="setting-require-approval" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-group">
+                    <div class="switch-info">
+                      <strong>Automated Email Notifications to Applicants</strong>
+                      <p class="text-muted">Send automatic status update notices when candidate status advances.</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="setting-auto-notify" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-group">
+                    <div class="switch-info">
+                      <strong>Enable Maintenance Mode</strong>
+                      <p class="text-muted">Prevent new applications during scheduled maintenance windows.</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="setting-maintenance-mode">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions mt-4">
+                <button type="submit" class="btn btn-primary">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Save System Settings
+                </button>
+                <span id="settings-save-feedback" class="status-msg"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-wrapper">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <span class="brand-name">Career<span>Pulse</span></span>
+        </div>
+        <p class="footer-tagline">The complete, multi-tenant online job portal engineered for modern recruitment.</p>
+      </div>
+
+      <div class="footer-meta">
+        <p>&copy; 2026 CareerPulse • GUVI Geek Network Pvt. Ltd. Project Implementation. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODALS CONTAINER ================= -->
+
+  <!-- MODAL 1: JOB DETAIL & APPLICATION MODAL -->
+  <div class="modal-backdrop" id="modal-job-detail">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-sub" id="modal-job-company">Stripe Technologies</span>
+          <h2 class="modal-title" id="modal-job-title">Senior Full-Stack Engineer</h2>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('modal-job-detail')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="job-detail-pills" id="modal-job-pills">
+          <!-- Tags injected -->
+        </div>
+
+        <div class="job-meta-grid">
+          <div class="job-meta-box">
+            <span class="meta-box-label">Department</span>
+            <strong id="modal-job-dept">Engineering</strong>
+          </div>
+          <div class="job-meta-box">
+            <span class="meta-box-label">Salary Range</span>
+            <strong id="modal-job-salary">$140,000 - $180,000</strong>
+          </div>
+          <div class="job-meta-box">
+            <span class="meta-box-label">Location</span>
+            <strong id="modal-job-location">San Francisco, CA (Remote)</strong>
+          </div>
+          <div class="job-meta-box">
+            <span class="meta-box-label">Experience</span>
+            <strong id="modal-job-exp">Senior (5+ yrs)</strong>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <h4>Job Description</h4>
+          <p id="modal-job-desc" class="modal-text-content"></p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Key Responsibilities & Requirements</h4>
+          <ul id="modal-job-reqs" class="modal-bullets-list"></ul>
+        </div>
+
+        <div class="modal-section">
+          <h4>Required Skills & Tech Stack</h4>
+          <div id="modal-job-skills" class="skills-tag-wrap"></div>
+        </div>
+
+        <!-- Application Form Trigger Section -->
+        <div class="application-form-panel" id="modal-apply-panel">
+          <div class="apply-panel-header">
+            <h4>Submit Application as <span id="modal-applicant-name">Alex Rivera</span></h4>
+            <span class="badge badge-primary">1-Click Apply Ready</span>
+          </div>
+
+          <form id="job-apply-form" onsubmit="JobSeeker.submitJobApplication(event)">
+            <input type="hidden" id="apply-job-id">
+            
+            <div class="form-group">
+              <label>Cover Letter / Note to Hiring Team</label>
+              <textarea id="apply-cover-letter" class="form-control" rows="3" placeholder="Explain why you are an ideal fit for this role..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Expected Annual Salary ($ USD)</label>
+                <input type="number" id="apply-expected-salary" class="form-control" placeholder="150000" required>
+              </div>
+              <div class="form-group">
+                <label>Earliest Start Date</label>
+                <input type="date" id="apply-start-date" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="attached-resume-row">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>Attaching profile resume: <strong id="apply-resume-name">Alex_Rivera_Senior_Resume.pdf</strong></span>
+            </div>
+
+            <div class="form-actions mt-3">
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                Confirm & Submit Application
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: EMPLOYER POST / EDIT JOB MODAL -->
+  <div class="modal-backdrop" id="modal-employer-job">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-sub">Employer Portal</span>
+          <h2 class="modal-title" id="employer-job-modal-title">Post New Job Vacancy</h2>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('modal-employer-job')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="employer-job-form" onsubmit="Employer.handleSaveJob(event)">
+          <input type="hidden" id="emp-edit-job-id">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Job Title *</label>
+              <input type="text" id="emp-job-title" class="form-control" placeholder="e.g. Staff Backend Engineer" required>
+            </div>
+            <div class="form-group">
+              <label>Department / Category *</label>
+              <select id="emp-job-dept" class="select-input" required>
+                <option value="Engineering">Engineering</option>
+                <option value="Product">Product</option>
+                <option value="Design">Design</option>
+                <option value="Data & AI">Data & AI</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Security">Security</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Employment Type *</label>
+              <select id="emp-job-type" class="select-input" required>
+                <option value="Full-time">Full-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Remote">Remote</option>
+                <option value="Part-time">Part-time</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Location *</label>
+              <input type="text" id="emp-job-location" class="form-control" placeholder="e.g. San Francisco, CA or Remote" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Salary Range (Display) *</label>
+              <input type="text" id="emp-job-salary" class="form-control" placeholder="e.g. $130,000 - $160,000" required>
+            </div>
+            <div class="form-group">
+              <label>Experience Level *</label>
+              <select id="emp-job-exp" class="select-input" required>
+                <option value="Entry-Level">Entry-Level</option>
+                <option value="Mid-Level">Mid-Level</option>
+                <option value="Senior">Senior</option>
+                <option value="Lead / Staff">Lead / Staff</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Job Description *</label>
+            <textarea id="emp-job-desc" class="form-control" rows="4" placeholder="Detailed overview of the role, responsibilities, and team mission..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Requirements (one per line) *</label>
+            <textarea id="emp-job-reqs" class="form-control" rows="3" placeholder="5+ years experience in Java or TypeScript&#10;Experience with AWS, Docker, and Microservices&#10;Excellent communication skills" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Required Skills (comma separated) *</label>
+            <input type="text" id="emp-job-skills" class="form-control" placeholder="Java, Spring Boot, React, AWS, Docker, SQL" required>
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+              Publish Job Listing
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-employer-job')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ADMIN CREATE / EDIT USER MODAL -->
+  <div class="modal-backdrop" id="modal-admin-user">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <span class="modal-sub">Super Admin</span>
+          <h2 class="modal-title" id="admin-user-modal-title">Create User Account</h2>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('modal-admin-user')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="admin-user-form" onsubmit="Admin.handleSaveUser(event)">
+          <input type="hidden" id="admin-edit-user-id">
+
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="admin-user-name" class="form-control" placeholder="e.g. Jane Doe" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="admin-user-email" class="form-control" placeholder="jane@company.com" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>System Role *</label>
+              <select id="admin-user-role" class="select-input" required>
+                <option value="seeker">Job Seeker</option>
+                <option value="employer">Employer</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Account Status *</label>
+              <select id="admin-user-status" class="select-input" required>
+                <option value="Active">Active</option>
+                <option value="Suspended">Suspended</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Company / Organization / Title</label>
+            <input type="text" id="admin-user-org" class="form-control" placeholder="e.g. Acme Corp or Senior Engineer">
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+              Save User Account
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-admin-user')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: RESUME PREVIEW MODAL -->
+  <div class="modal-backdrop" id="modal-resume-preview">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-sub">Document Viewer</span>
+          <h2 class="modal-title" id="resume-preview-title">Candidate Resume</h2>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('modal-resume-preview')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="resume-document-paper" id="resume-document-content">
+          <!-- Rendered formatted CV -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: ROLE SELECTOR MODAL -->
+  <div class="modal-backdrop" id="modal-role-select">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <span class="modal-sub">Demo Identity Switcher</span>
+          <h2 class="modal-title">Switch Active Role</h2>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('modal-role-select')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted mb-3">Choose a simulated persona to test the portal's role-based functionalities:</p>
+        <div class="role-select-list" id="role-select-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION CONTAINER ================= -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="js/data.js"></script>
+  <script src="js/jobseeker.js"></script>
+  <script src="js/employer.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
